@@ -1,6 +1,8 @@
 const express = require('express');
+const fs = require('fs');
 const path = require('path')
-const termData = require('./db/db.json');
+const notesData = require('./db/db.json');
+const {v4: uuidnotes} = require('uuid')
 
 const PORT = process.env.port || 3001;
 
@@ -15,15 +17,35 @@ app.get('/notes', (req, res) =>
 res.sendFile(path.join(__dirname, 'public/notes.html'))
 );
 
+
+app.get('/api/notes', (req, res) => {
+    res.json(notesData)
+});
+
+
+app.post('/api/notes', (req, res) => {
+    const { title, text } = req.body;
+    if( title && text){
+        const noteAdded ={
+            title,
+            text,
+            id: uuidnotes(),
+        };
+
+        notesData.push(noteAdded);
+    }
+
+    fs.writeFile('./db/db.json', JSON.stringify(notesData), err =>{
+        console.log(err)
+    }
+    )
+
+    res.json(notesData);
+}); 
+
 app.get('*', (req, res) => 
 res.sendFile(path.join(__dirname, 'public/index.html' ))
 );
-
-app.get('/api/notes', (req, res) => res.json(termData));
-
-app.post('/api/notes', (req, res) =>
-console.log(req.body)
-) 
 
 
 app.listen(PORT, () =>
