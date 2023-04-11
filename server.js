@@ -43,6 +43,11 @@ app.post('/api/notes', (req, res) => {
     res.json(notesData);
 }); 
 
+// app.delete('api/notes/:id', (req, res) =>{
+//     res.json(notesData)
+
+// })
+
 app.get('*', (req, res) => 
 res.sendFile(path.join(__dirname, 'public/index.html' ))
 );
